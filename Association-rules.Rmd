@@ -1,0 +1,133 @@
+---
+title: "Association Rules"
+author: "Cynthia Mwadime"
+date: '2022-10-06'
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+#specifying global settings to be applied to the whole R Markdown script.
+# setting all code chunks as “echo=TRUE” so they're all included in the final rendered version.
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Association Analysis
+
+This section ivolves creation of association rules that allow us to identify relationships between variables in the dataset.
+
+We are tasked with creating association rules that will allow us to identify relationships between variables in the dataset. We have been provided with a dataset that comprises of groups of items that will be associated with others. 
+### Importing the arules library
+
+```{r}
+# Loading the arules library
+library(arules, warn.conflicts = FALSE)
+```
+
+
+# Loading the data 
+
+```{r}
+# loading
+sm <- read.transactions("http://bit.ly/SupermarketDatasetII", sep = ",")
+sm
+```
+
+```{r}
+# Previewing our first 5 transactionss
+class(sm)
+inspect(sm[1:5])
+```
+
+
+
+###Generating a summary of the supermarket dataset
+This gives us information on stuff like distribution of the item sets, most purchased items and number of items purchased in each transaction among other things 
+```{r }
+summary(sm)
+```
+
+From the report we can see that the most sold items were mineral water], eggs,sphagetti,french fries and chocolate repectively.
+
+
+
+```{r}
+# Let's see transacations ranging from 6 to 10 
+# percentage of the total transactions 
+itemFrequency(sm[, 6:10],type = "absolute")
+round(itemFrequency(sm[, 6:10],type = "relative")*100,2)
+```
+### Displaying items whose relative importance is at least 10% 
+```{r}
+par(mfrow = c(1, 2))
+# plot the frequency of items
+itemFrequencyPlot(sm, support = 0.1,col="violet")
+```
+### Displaying top 10 most common items in the transactions dataset and the 
+```{r}
+itemFrequencyPlot(sm, topN = 10,col="lightblue")
+```
+### Building a model based on association rules 
+* We'll be using the apriori function 
+```{r}
+# We use Min Support as 0.001 and confidence as 0.8
+rules <- apriori (sm, parameter = list(supp = 0.001, conf = 0.7))
+rules
+```
+We obtained a set of 200 rules.
+
+### Tweking the parameters
+Let's now see see happens if we increase the support or lower the confidence level. 
+
+```{r}
+# Building a apriori model with Min Support as 0.002 and confidence as 0.6
+ruls <- apriori (sm,parameter = list(supp = 0.002, conf = 0.6)) 
+ruls
+```
+This gives us a set of 43 rules which is is not enough
+
+```{r}
+# Building the apriori model with Min Support as 0.002 and confidence as 0.6.
+ruls2 <- apriori (sm, parameter = list(supp = 0.001, conf = 0.6)) 
+ruls2
+```
+This gives us 545 rules. That we can work with
+
+### Let's now get more information on support, lift and confidence 
+
+```{r}
+
+summary(ruls2)
+```
+
+Most rules have 3 and 4 items 
+
+```{r}
+# Observing the first 5 rules built in our model
+inspect(ruls2[1:5])
+```
+
+If someone buys cookies and shallot they are 60% likely to buy low fat yogurt.
+
+```{r}
+# Ordering the rules by the level of confidence then looking at the first five rules.
+ruls2<-sort(ruls2, by="confidence", decreasing=TRUE)
+inspect(ruls2[1:5])
+```
+
+The first four rules have a confidence of 100%.
+
+```Were interested in creating an ad relating to the sale of a particular item, we could create a subset of rules concerning this product. This would inform us on what items the customers bought before purchasing our target item. Let's use escalope and see our theory in action```
+
+```{r}
+escalope <- subset(rules, subset = rhs %pin% "escalope")
+# Then order by confidence
+escalope <-sort(escalope, by="count", decreasing=TRUE)
+
+```
+
+```{r}
+inspect(escalope)
+```
+* mushroom cream sauce and pasta were in 19 shopping basckets while frenchfries, mushroom creamsauce and pasta had been in 8 basket therefore it would motivate most mushroom cream sauce and pasta buyers to buy escalope as well were they promoted together.
+
+
