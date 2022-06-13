@@ -8,7 +8,7 @@ The project has been divided into four parts where I explored a recent marketing
 
 **Part 1: Dimensionality Reduction**
 
-This section of the project entails reducing the dataset to a low dimensional dataset using the t-SNE algorithm or PCA. An analysis was also performed and provide insights gained from your analysis.
+This section of the project entails reducing the dataset to a low dimensional dataset using the t-SNE algorithm. A thorough analysis was performed and insights gained analysis provided.
     
 **Part 2: Feature Selection**
 
@@ -16,7 +16,7 @@ This section entails feature selection through the use of the unsupervised learn
 
 **Part 3: Association Rules**
 
-This section ivolves creation of association rules that allow us to identify relationships between variables in the dataset. This is done using a separate dataset that comprises groups of items that will be associated with others. Just like in the other sections, you will also be required to provide insights for your analysis.
+This section ivolves creation of association rules that allow us to identify relationships between items in a supermarket(variables in a dataset). This is done using a separate dataset that comprises groups of items that will be associated with others. Just like in the other sections, you will also be required to provide insights for your analysis.
 
 **Part 4: Anomaly Detection**
 
